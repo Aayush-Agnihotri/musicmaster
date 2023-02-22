@@ -1,38 +1,101 @@
-.App {
-  text-align: center;
+html, body {
+    min-height: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+    background: rgb(2,0,36);
+    background: linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(255,117,0,1) 100%);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.logo-img {
+    margin-top: -30%;
+    margin-bottom: -20%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+h1 {
+    font-size: 2em;
+    margin-bottom: 12px;
+    margin-top: 0;
 }
 
-.App-link {
-  color: #61dafb;
+#login-content {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+        flex-direction: column;
+    margin: auto;
+    position: absolute;
+    top: 10%;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    overflow: hidden;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#login-container {
+    display: -ms-flexbox;
+    display: flex;
+    height: 100%;
+    -ms-flex-direction: column;
+        flex-direction: column;
+    -ms-flex-align: center;
+        align-items: center;
+    margin: 0 auto;
+    -ms-flex-pack: center;
+        justify-content: center;
+}
+
+#login-container .login {
+    color: #ffffff;
+    text-align: center;
+    padding: 70px;
+}
+
+#login-container .login .big-btn {
+    margin: 10px 0 20px 0;
+}
+
+#login-container .login p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.big-btn {
+    color: #fff;
+    background-color: #ff7500;
+    font-size: 14px;
+    line-height: 1;
+    border-radius: 500px;
+    padding: 18px 48px 16px;
+    transition-property: background-color;
+    transition-duration: .3s;
+    border-width: 0;
+    letter-spacing: 2px;
+    min-width: 160px;
+    text-transform: uppercase;
+    white-space: normal;
+    cursor: pointer;
+}
+
+.big-btn:hover {
+    background-color: #ff5300;
+}
+
+input[type=text]{
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+     border-radius: 20px;
+     border: 1px solid rgba(2,0,36,1);
+     color: rgba(2,0,36,1);
+     width: 250px;
+     height: 30px;
+     padding-left: 10px;
+    }
+    
+input[type=text]:focus {
+     outline: none;
+     border: 1px solid #ff7500;
+     color: rgba(2,0,36,1);
 }

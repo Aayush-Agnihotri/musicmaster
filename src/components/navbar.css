@@ -1,0 +1,98 @@
+.nav {
+    margin: -1% -1% 0px -1%;
+    padding: 0;
+    box-sizing: border-box;
+    background: #222;
+    padding: 5px 20px;
+    display: flex;
+    align-items: center;
+}
+
+.nav a, .nav a:hover {
+    text-decoration: none;
+}
+
+.nav a {
+    color: #fff;
+    font-weight: bold;
+}
+
+.nav a:hover {
+    color: #ff7500;
+}
+
+.logo {
+    display: flex;
+    flex: 1;
+}
+
+.logo a {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+}
+
+.logo a:hover {
+    color: #fff;
+}
+
+.logo img {
+    width: 7%;
+    margin-left: 3%;
+    margin-right: -2%;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+}
+
+.menu li {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+}
+
+#logout-btn {
+    justify-content: center;
+    color: #fff;
+    background-color: #ff7500;
+    font-size: 14px;
+    line-height: 1;
+    border-radius: 500px;
+    padding: 18px 30px 20px;
+    transition-property: background-color;
+    transition-duration: .3s;
+    border-width: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+#logout-btn:hover {
+    background-color: #ff5300;
+}
+
+.pfp {
+    border-radius: 50px;
+    margin-right: 50%;
+}
+
+.toggle {
+    font-size: 30px;
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    .nav {
+        display: block;
+        position: relative;
+        padding: 15px 20px;
+    }
+
+    .menu {
+        margin-top: 15px;
+        display: none;
+    }
+}
