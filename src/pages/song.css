@@ -1,5 +1,4 @@
 .song-container, .rec-container {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: white;
 }
 
@@ -138,7 +137,6 @@
     width: 90%;
     table-layout: fixed;
     border-collapse: separate;
-    /* padding: 1%; */
     margin: auto;
 }
 

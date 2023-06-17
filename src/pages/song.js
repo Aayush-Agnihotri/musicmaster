@@ -1,19 +1,14 @@
 import { useState, useEffect, } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './song.css'
-import Navbar from './navbar';
 import axios from 'axios';
 import Heart from "react-heart"
 
 function Song() {
-    const location = useLocation();
-    let navigate = useNavigate();
+    const navigate = useNavigate();
+    const { songID } = useParams();
 
-    const newLogout = () => {
-        window.location.href = "/logout";
-    }
-
-    const token = location.state.loggedIn;
+    const token = window.localStorage.getItem("token");
     const [songInfo, setSongInfo] = useState();
     const [songFeatures, setSongFeatures] = useState();
 
@@ -28,20 +23,12 @@ function Song() {
     const [active, setActive] = useState(false)
 
     useEffect(() => {
-        let ignore = false;
-        if (!ignore) {
-            renderPage();
-        }
-        return () => { ignore = true; }
-    },[]);
-
-    const renderPage = async (e) => {
         getBasicSongInfo();
         getSongFeatures();
-    }
+    },[]);
 
     const getBasicSongInfo = async (e) => {
-        const {data} = await axios.get("https://api.spotify.com/v1/tracks/" + location.state.id, {
+        const { data } = await axios.get("https://api.spotify.com/v1/tracks/" + songID, {
             headers: {
                 Authorization: `Bearer ${token}`
             },
@@ -50,70 +37,70 @@ function Song() {
         var dob = new Date(data.album.release_date);
         var dobArr = dob.toDateString().split(' ');
         var dobFormat = dobArr[1] + ' ' + dobArr[2] + ', ' + dobArr[3];
-        setReleaseDate(dobFormat)
+        setReleaseDate(dobFormat);
     }
 
     const getSongFeatures = async (e) => {
-        const {data} = await axios.get("https://api.spotify.com/v1/audio-features/" + location.state.id, {
+        const { data } = await axios.get("https://api.spotify.com/v1/audio-features/" + songID, {
             headers: {
                 Authorization: `Bearer ${token}`
             },
         }).catch(response => { console.log(response) });
         setSongFeatures(data);
-        setDurationMin(parseInt(data.duration_ms / 60000))
-        setDurationSec(Math.ceil(((data.duration_ms / 60000) * 60) % 60) === 60 ? 59 : Math.ceil(((data.duration_ms / 60000) * 60) % 60))
+        setDurationMin(parseInt(data.duration_ms / 60000));
+        setDurationSec(Math.ceil(((data.duration_ms / 60000) * 60) % 60) === 60 ? 59 : Math.ceil(((data.duration_ms / 60000) * 60) % 60));
     }
 
     const getSongRecsTempo = async (e) => {
-        const {data} = await axios.get("https://api.spotify.com/v1/recommendations/", {
+        const { data } = await axios.get("https://api.spotify.com/v1/recommendations/", {
             headers: {
                 Authorization: `Bearer ${token}`
             },
             params: {
                 seed_artists: songInfo.album.artists[0].id,
                 seed_genres: "",
-                seed_tracks: location.state.id,
+                seed_tracks: songID,
                 limit: 8,
                 target_tempo: songFeatures.tempo
             }
         }).catch(response => { console.log(response) });
-        setSongRecsTempo(data)
+        setSongRecsTempo(data);
     }
 
     const getSongRecsEnergy = async (e) => {
-        const {data} = await axios.get("https://api.spotify.com/v1/recommendations/", {
+        const { data } = await axios.get("https://api.spotify.com/v1/recommendations/", {
             headers: {
                 Authorization: `Bearer ${token}`
             },
             params: {
                 seed_artists: songInfo.album.artists[0].id,
                 seed_genres: "",
-                seed_tracks: location.state.id,
+                seed_tracks: songID,
                 limit: 8,
                 target_energy: songFeatures.energy
             }
         }).catch(response => { console.log(response) });
-        setSongRecsEnergy(data)
+        setSongRecsEnergy(data);
     }
 
     const getSongRecsValence = async (e) => {
-        const {data} = await axios.get("https://api.spotify.com/v1/recommendations/", {
+        const { data } = await axios.get("https://api.spotify.com/v1/recommendations/", {
             headers: {
                 Authorization: `Bearer ${token}`
             },
             params: {
                 seed_artists: songInfo.album.artists[0].id,
                 seed_genres: "",
-                seed_tracks: location.state.id,
+                seed_tracks: songID,
                 limit: 8,
                 target_energy: songFeatures.valence
             }
         }).catch(response => { console.log(response) });
-        setSongRecsValence(data)
+        setSongRecsValence(data);
     }
 
     const renderTempoRecs = () => {
-        let newArr = songRecsTempo.tracks
+        let newArr = songRecsTempo.tracks;
         for (let i = 0; i < songRecsTempo.tracks.length; i++) {
             if (newArr[i].name === songInfo.name) {
                 newArr.splice(i, 1)
@@ -121,25 +108,22 @@ function Song() {
             }
         }
         while (newArr.length > 5) {
-            newArr.pop()
+            newArr.pop();
         }
-
         return newArr.map(arr => (
             <tbody>
                 <tr>
                     <td className='song-rec-name'><button className='song-rec-button' onClick={() => {
-                        navigate("/song", {state: {id: arr.id, loggedIn: location.state.loggedIn, logout: location.state.logout, pfp: location.state.pfp, user: location.state.user}});
+                        navigate(`/song/${arr.id}`);
                         window.location.reload(false);
                     }}>{arr.name}</button></td>
                     <td><button className='song-rec-button' onClick={() => {
-                        navigate("/artist", {state: {id: arr.artists[0].id, loggedIn: location.state.loggedIn, logout: location.state.logout, pfp: location.state.pfp, user: location.state.user}});
+                        navigate(`/artist/${arr.artists[0].id}`);
                     }}>{arr.artists[0].name}</button></td>
                 </tr>
             </tbody>
         ))
     }
-    
-    
 
     const renderEnergyRecs = () => {
         let newArr = songRecsEnergy.tracks
@@ -152,16 +136,15 @@ function Song() {
         while (newArr.length > 5) {
             newArr.pop()
         }
-
         return newArr.map(arr => (
             <tbody>
                 <tr>
                     <td className='song-rec-name'><button className='song-rec-button' onClick={() => {
-                        navigate("/song", {state: {id: arr.id, loggedIn: location.state.loggedIn, logout: location.state.logout, pfp: location.state.pfp, user: location.state.user}});
+                        navigate(`/song/${arr.id}`);
                         window.location.reload(false);
                     }}>{arr.name}</button></td>
                     <td><button className='song-rec-button' onClick={() => {
-                        navigate("/artist", {state: {id: arr.artists[0].id, loggedIn: location.state.loggedIn, logout: location.state.logout, pfp: location.state.pfp, user: location.state.user}});
+                        navigate(`/artist/${arr.artists[0].id}`);
                     }}>{arr.artists[0].name}</button></td>
                 </tr>
             </tbody>
@@ -184,58 +167,16 @@ function Song() {
             <tbody>
                 <tr>
                     <td className='song-rec-name'><button className='song-rec-button' onClick={() => {
-                        navigate("/song", {state: {id: arr.id, loggedIn: location.state.loggedIn, logout: location.state.logout, pfp: location.state.pfp, user: location.state.user}});
+                        navigate(`/song/${arr.id}`);
                         window.location.reload(false);
                     }}>{arr.name}</button></td>
                     <td><button className='song-rec-button' onClick={() => {
-                        navigate("/artist", {state: {id: arr.artists[0].id, loggedIn: location.state.loggedIn, logout: location.state.logout, pfp: location.state.pfp, user: location.state.user}});
+                        navigate(`/artist/${arr.artists[0].id}`);
                     }}>{arr.artists[0].name}</button></td>
                 </tr>
             </tbody>
         ))
     }
-
-    // const addTempo = async (e) => {
-    //     e.preventDefault()
-    //     console.log(location.state.user)
-    //     const {data} = await axios.get("https://api.spotify.com/v1/search", {
-    //         headers: {
-    //             Authorization: `Bearer ${token}`
-    //         },
-    //         params: {
-    //             type: "track"
-    //         }
-    //     }).catch(response => console.log("Error"));
-        
-    // }
-
-    // const addEnergy = async (e) => {
-    //     e.preventDefault()
-    //     // console.log(location.state.user)
-    //     const {data} = await axios.get("https://api.spotify.com/v1/search", {
-    //         headers: {
-    //             Authorization: `Bearer ${token}`
-    //         },
-    //         params: {
-    //             type: "track"
-    //         }
-    //     }).catch(response => console.log("Error"));
-        
-    // }
-
-    // const addValence = async (e) => {
-    //     e.preventDefault()
-    //     // console.log(location.state.user)
-    //     const {data} = await axios.get("https://api.spotify.com/v1/search", {
-    //         headers: {
-    //             Authorization: `Bearer ${token}`
-    //         },
-    //         params: {
-    //             type: "track"
-    //         }
-    //     }).catch(response => console.log("Error"));
-        
-    // }
 
     useEffect(() => {
         if (songInfo && songFeatures) {
@@ -244,12 +185,9 @@ function Song() {
             getSongRecsValence();
         }
     }, [songInfo, songFeatures])
-
-    
     
     return (
         <>
-            <Navbar loggedIn={location.state.loggedIn} logout={newLogout} pfp={location.state.pfp} />
             <div>
                 {songInfo && songFeatures ? 
                 <>
@@ -257,7 +195,7 @@ function Song() {
                         <img className='albumPic' src={songInfo.album.images[0].url} alt='Album Cover' />
                         <h1 className='subheader song'>{songInfo.name} <Heart style={{ width: "1.5rem", fill: active ? "#ff7500" : "transparent", stroke: active ? "white" : "white" }} inactiveColor = "white" isActive={active} onClick={() => setActive(!active)} animationScale = {1.2} animationTrigger = "both" animationDuration = {.2} className = {`customHeart${active ? " active": ""}`}/></h1>
                         <h2 className='subheader artist' style={{fontWeight: "250", marginTop: "-10px", cursor: "pointer"}} onClick={() => {
-                            navigate("/artist", {state: {id: songInfo.artists[0].id, loggedIn: location.state.loggedIn, logout: location.state.logout, pfp: location.state.pfp, user: location.state.user}});
+                            navigate("/artist");
                         }} >{songInfo.artists[0].name}</h2>
 
                         <div className='song-data'>
@@ -334,23 +272,6 @@ function Song() {
                             </tr>
                         </table>
                     </div>
-
-                    {/* <div className='buttons'>
-                        <table className='button-table'>
-                            <tr>
-                                <th>
-                                    <button className='big-btn' onClick={addTempo} >Add All to Playlist</button>
-                                </th>
-                                <th>
-                                    <button className='big-btn' onClick={addEnergy} >Add All to Playlist</button>
-                                </th>
-                                <th>
-                                    <button className='big-btn' onClick={addValence} >Add All to Playlist</button>
-                                </th>
-                            </tr>
-                        </table>
-                    </div> */}
-
                 </>
                 : <></>}
             </div>
