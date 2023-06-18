@@ -17,6 +17,7 @@ function Artist() {
     useEffect(() => {
         getArtist();
         getTopTracks();
+        checkHeart();
     },[]);
 
     const getArtist = async (e) => {
@@ -54,22 +55,32 @@ function Artist() {
         ))
     }
 
+    const checkHeart = async () => {
+        const userID = window.localStorage.getItem("userID");
+        axios.post("http://127.0.0.1:80/api/artist/check", {
+            data: {
+                "userID": userID,
+                "artistID": artistID
+                }
+            }).then(response => {
+                setActive(response.data.data);
+            })
+    }
+
     const handleHeartClick = () => {
         const userID = window.localStorage.getItem("userID");
         const artistName = artistInfo.name;
         const artistGenre = artistInfo.genres[0] ? artistInfo.genres[0].toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') : "Unknown";
         if (active) {
-            // Currently hearted, remove from database
-            axios.post("/api/artist/remove", {
-                params: {
+            axios.post("http://127.0.0.1:80/api/artist/remove", {
+                data: {
                     "userID": userID,
                     "artistID": artistID
                 }
             });
         } else {
-            // Not hearted, add to database
-            axios.post("/api/artist/add", {
-                params: {
+            axios.post("http://127.0.0.1:80/api/artist/add", {
+                data: {
                     "userID": userID,
                     "artistID": artistID,
                     "artistName": artistName,

@@ -1,0 +1,65 @@
+.favorites-container {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.favorites-song-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+}
+
+.favorites-artist-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+}
+
+.recommended-song-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+}
+
+.favorites-table-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ff7500;
+    border-radius: 10px 10px 0 0;
+}
+
+.favorites-table-header {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    color: white;    
+}
+
+.favorites-table-entries-container {
+    width: 100%;
+    background-color: white;
+}
+
+.favorites-table-content-container {
+    width: 90%;
+    margin: auto;
+    color: black;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

@@ -6,7 +6,6 @@ import Login from './pages/login';
 import Song from './pages/song';
 import Favorites from './pages/favorites';
 import Artist from './pages/artist';
-import NotFound from './pages/notfound';
 
 function App() {
     return (
@@ -18,7 +17,6 @@ function App() {
                     <Route path='/song/:songID' element={<Song />} />
                     <Route path='/artist/:artistID' element={<Artist />} />
                 </Route>
-                <Route path='*' element={<NotFound />} />
             </Routes>
         </>
     )

@@ -1,4 +1,5 @@
 import psycopg2
+import os
 
 def singleton(cls):
     instances = {}
@@ -12,7 +13,7 @@ def singleton(cls):
 
 class DatabaseDriver(object):
     def __init__(self):
-        self.conn = psycopg2.connect(database="musicmaster", user="postgres", password="aayush54", host="localhost", port="5432")
+        self.conn = psycopg2.connect(database="musicmaster", user=os.environ.get("DB_USER"), password=os.environ.get("DB_PASSWORD"), host="localhost", port="5432")
         self.cur = self.conn.cursor()
     
     def add_user(self, userID):
@@ -20,13 +21,13 @@ class DatabaseDriver(object):
         self.conn.commit()
         return self.cur.fetchone()[0]
     
-    def add_song(self, songID, name, artist, duration):
-        self.cur.execute("INSERT INTO songs (songID, name, artist, duration) VALUES (%s, %s, %s, %s) RETURNING id ", (songID, name, artist, duration,))
+    def add_song(self, songID, acousticness, danceability, duration_ms, energy, instrumentalness, key, liveness, loudness, mode, speechiness, tempo, time_signature, valence, target, song_title, artist):
+        self.cur.execute("INSERT INTO songs (songID, acousticness, danceability, duration_ms, energy, instrumentalness, key, liveness, loudness, mode, speechiness, tempo, time_signature, valence, target, song_title, artist) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s,%s, %s) RETURNING id ", (songID, acousticness, danceability, duration_ms, energy, instrumentalness, key, liveness, loudness, mode, speechiness, tempo, time_signature, valence, target, song_title, artist,))
         self.conn.commit()
         return self.cur.fetchone()[0]
     
-    def add_artist(self, artistID, name, genre, popularity):
-        self.cur.execute("INSERT INTO artists (artistID, name, genre, popularity) VALUES (%s, %s, %s, %s) RETURNING id ", (artistID, name, genre, popularity,))
+    def add_artist(self, artistID, name, genre, followers):
+        self.cur.execute("INSERT INTO artists (artistID, name, genre, followers) VALUES (%s, %s, %s, %s) RETURNING id ", (artistID, name, genre, followers,))
         self.conn.commit()
         return self.cur.fetchone()[0]
     
@@ -41,30 +42,42 @@ class DatabaseDriver(object):
         return self.cur.fetchone()[0]
     
     def get_song_by_id(self, songID):
-        self.cur.execute("SELECT * FROM songs WHERE songID=%s;", (songID,))
-        for row in self.cur:
-            return {"id" : row[0], "songID" : row[1], "name" : row[2], "artist" : row[3], "duration" : row[4]}
+        conn = psycopg2.connect(database="musicmaster", user=os.environ.get("DB_USER"), password=os.environ.get("DB_PASSWORD"), host="localhost", port="5432")
+        cur = conn.cursor()
+        
+        cur.execute("SELECT * FROM songs WHERE songID=%s;", (songID,))
+        for row in cur:
+            return [row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8],  row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17]]
         return None
 
     def get_artist_by_id(self, artistID):
-        self.cur.execute("SELECT * FROM artists WHERE artistID=%s;", (artistID,))
-        for row in self.cur:
-            return {"id" : row[0], "artistID" : row[1], "name" : row[2], "genre" : row[3], "popularity" : row[4]}
+        conn = psycopg2.connect(database="musicmaster", user=os.environ.get("DB_USER"), password=os.environ.get("DB_PASSWORD"), host="localhost", port="5432")
+        cur = conn.cursor()
+        
+        cur.execute("SELECT * FROM artists WHERE artistID=%s;", (artistID,))
+        for row in cur:
+            return [row[1], row[2], row[3], row[4]]
         return None
     
     def get_songs_by_user_id(self, userID):
-        self.cur.execute("SELECT * FROM users_songs_assoc WHERE userID=%s;", (userID,))
+        conn = psycopg2.connect(database="musicmaster", user=os.environ.get("DB_USER"), password=os.environ.get("DB_PASSWORD"), host="localhost", port="5432")
+        cur = conn.cursor()
+        
+        cur.execute("SELECT * FROM users_songs_assoc WHERE userID=%s;", (userID,))
         songs = []
-        for row in self.cur:
+        for row in cur:
             song = self.get_song_by_id(row[2])
             if song is not None:
                 songs.append(song)
         return songs
     
     def get_artists_by_user_id(self, userID):
-        self.cur.execute("SELECT * FROM users_artists_assoc WHERE userID=%s;", (userID,))
+        conn = psycopg2.connect(database="musicmaster", user=os.environ.get("DB_USER"), password=os.environ.get("DB_PASSWORD"), host="localhost", port="5432")
+        cur = conn.cursor()
+        
+        cur.execute("SELECT * FROM users_artists_assoc WHERE userID=%s;", (userID,))
         artists = []
-        for row in self.cur:
+        for row in cur:
             artist = self.get_artist_by_id(row[2])
             if artist is not None:
                 artists.append(artist)
@@ -84,6 +97,18 @@ class DatabaseDriver(object):
     
     def check_artist_exists(self, artistID):
         self.cur.execute("SELECT * FROM artists WHERE artistID=%s;", (artistID,))
+        for row in self.cur:
+            return True
+        return False
+    
+    def check_user_song_assoc_exists(self, userID, songID):
+        self.cur.execute("SELECT * FROM users_songs_assoc WHERE userID=%s AND songID=%s;", (userID, songID,))
+        for row in self.cur:
+            return True
+        return False
+    
+    def check_user_artist_assoc_exists(self, userID, artistID):
+        self.cur.execute("SELECT * FROM users_artists_assoc WHERE userID=%s AND artistID=%s;", (userID, artistID,))
         for row in self.cur:
             return True
         return False

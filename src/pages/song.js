@@ -25,6 +25,7 @@ function Song() {
     useEffect(() => {
         getBasicSongInfo();
         getSongFeatures();
+        checkHeart();
     },[]);
 
     const getBasicSongInfo = async (e) => {
@@ -177,30 +178,51 @@ function Song() {
             </tbody>
         ))
     }
+    
+    const checkHeart = async () => {
+        const userID = window.localStorage.getItem("userID");
+        axios.post("http://127.0.0.1:80/api/song/check", {
+            data: {
+                "userID": userID,
+                "songID": songID
+                }
+            }).then(response => {
+                setActive(response.data.data);
+            })
+    }
 
     const handleHeartClick = () => {
         const userID = window.localStorage.getItem("userID");
-        const songName = songInfo.name;
-        const songArtist = songInfo.artists[0].name;
         if (active) {
-            // Currently hearted, remove from database
-            axios.post("/api/song/remove", {
-                params: {
+            axios.post("http://127.0.0.1:80/api/song/remove", {
+                data: {
                     "userID": userID,
                     "songID": songID
                 }
-            }).catch(response => { console.log(response) });
+            })
         } else {
-            // Not hearted, add to database
-            axios.post("http://127.0.0.1/api/song/add", {
+            axios.post("http://127.0.0.1:80/api/song/add", {
                 data: {
                     "userID": userID,
                     "songID": songID,
-                    "songName": songName,
-                    "songArtist": songArtist,
-                    "songDuration": songFeatures.duration_ms
+                    "acousticness": songFeatures.acousticness,
+                    "danceability": songFeatures.danceability,
+                    "duration_ms": songFeatures.duration_ms,
+                    "energy": songFeatures.energy,
+                    "instrumentalness": songFeatures.instrumentalness,
+                    "key": songFeatures.key,
+                    "liveness": songFeatures.liveness,
+                    "loudness": songFeatures.loudness,
+                    "mode": songFeatures.mode,
+                    "speechiness": songFeatures.speechiness,
+                    "tempo": songFeatures.tempo,
+                    "time_signature": songFeatures.time_signature,
+                    "valence": songFeatures.valence,
+                    "target": 1,
+                    "song_title": songInfo.name,
+                    "artist": songInfo.artists[0].name,
                 }
-            }).catch(response => { console.log(response) });
+            });
         }
         setActive(!active);
     }
