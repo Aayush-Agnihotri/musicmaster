@@ -41,7 +41,6 @@ function Artist() {
     }
 
     const renderTopTracks = () => {
-        console.log(topTracks.tracks)
         return topTracks.tracks.map(arr => (
             <tbody>
                 <tr>
@@ -64,8 +63,7 @@ function Artist() {
             axios.post("/api/artist/remove", {
                 params: {
                     "userID": userID,
-                    "artistName": artistName,
-                    "artistGenre": artistGenre
+                    "artistID": artistID
                 }
             });
         } else {
@@ -73,8 +71,11 @@ function Artist() {
             axios.post("/api/artist/add", {
                 params: {
                     "userID": userID,
+                    "artistID": artistID,
                     "artistName": artistName,
-                    "artistGenre": artistGenre
+                    "artistGenre": artistGenre,
+                    "followers": artistInfo.followers.total.toLocaleString(),
+
                 }
             });
         }

@@ -187,19 +187,20 @@ function Song() {
             axios.post("/api/song/remove", {
                 params: {
                     "userID": userID,
-                    "songName": songName,
-                    "songArtist": songArtist
+                    "songID": songID
                 }
-            });
+            }).catch(response => { console.log(response) });
         } else {
             // Not hearted, add to database
-            axios.post("/api/song/add", {
-                params: {
+            axios.post("http://127.0.0.1/api/song/add", {
+                data: {
                     "userID": userID,
+                    "songID": songID,
                     "songName": songName,
-                    "songArtist": songArtist
+                    "songArtist": songArtist,
+                    "songDuration": songFeatures.duration_ms
                 }
-            });
+            }).catch(response => { console.log(response) });
         }
         setActive(!active);
     }
