@@ -2,6 +2,7 @@ import './artist.css'
 import { useState, useEffect, } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import Heart from "react-heart"
 
 function Artist() {
     const navigate = useNavigate();
@@ -10,6 +11,8 @@ function Artist() {
     const token = window.localStorage.getItem("token");
     const [artistInfo, setArtistInfo] = useState();
     const [topTracks, setTopTracks] = useState();
+
+    const [active, setActive] = useState(false);
 
     useEffect(() => {
         getArtist();
@@ -52,19 +55,58 @@ function Artist() {
         ))
     }
 
+    const handleHeartClick = () => {
+        const userID = window.localStorage.getItem("userID");
+        const artistName = artistInfo.name;
+        const artistGenre = artistInfo.genres[0] ? artistInfo.genres[0].toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') : "Unknown";
+        if (active) {
+            // Currently hearted, remove from database
+            axios.post("/api/artist/remove", {
+                params: {
+                    "userID": userID,
+                    "artistName": artistName,
+                    "artistGenre": artistGenre
+                }
+            });
+        } else {
+            // Not hearted, add to database
+            axios.post("/api/artist/add", {
+                params: {
+                    "userID": userID,
+                    "artistName": artistName,
+                    "artistGenre": artistGenre
+                }
+            });
+        }
+        setActive(!active);
+    }
+
     return (
         <>
             {artistInfo && topTracks ? 
             <>
                 <div className='artist-container'>
-                    <img className='albumPic' src={artistInfo.images[0].url} alt='Album Cover' />
-                    <h1 className='subheader artist'>{artistInfo.name}</h1>
-                    <h2 className='subheader artist-name' style={{fontWeight: "250", marginTop: "-10px"}}>Artist</h2>
-
+                    <div className='album-pic-container'>
+                        <img className='album-pic' src={artistInfo.images[0].url} alt='Artist Cover' />
+                    </div>
+                    <div className='subheader-container'>
+                        <h1 className='subheader-name'>{`${artistInfo.name} `}
+                            <Heart className = {`customHeart${active ? " active": ""}`} style={{ width: "1.5rem", fill: active ? "#ff7500" : "transparent", stroke: active ? "white" : "white" }} inactiveColor = "white" isActive={active} onClick={handleHeartClick} animationScale={1.2} animationTrigger="both" animationDuration={.2} />
+                        </h1>
+                        <h2 className='subheader-artist' style={{fontWeight: "250", marginTop: "-10px"}}>Artist</h2>
+                    </div>
                     <div className='artist-data'>
                         <table className='artist-data-table'>
-                            <tr><th className='artist-data-headings'>Followers</th> <th className='artist-data-headings'>Popularity</th> <th className='artist-data-headings'>Genre</th></tr>
-                            <tr><td className='artist-data-entries'>{artistInfo.followers.total.toLocaleString()}</td> <td className='artist-data-entries'>{artistInfo.popularity}</td> <td className='artist-data-entries'>{artistInfo.genres[0] ? artistInfo.genres[0].toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') : "Unknown"}</td></tr>
+                            <tr>
+                                <th className='artist-data-headings'>Followers</th>
+                                <th className='artist-data-headings'>Popularity</th>
+                                <th className='artist-data-headings'>Genre</th>
+                            </tr>
+                            <tr>
+                                <td className='artist-data-entries'>{artistInfo.followers.total.toLocaleString()}</td>
+                                <td className='artist-data-entries'>{artistInfo.popularity}</td>
+                                <td className='artist-data-entries'>{artistInfo.genres[0] ? artistInfo.genres[0].toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') : "Unknown"}</td>
+                            </tr>
                         </table>
                     </div>
                 </div>

@@ -178,6 +178,32 @@ function Song() {
         ))
     }
 
+    const handleHeartClick = () => {
+        const userID = window.localStorage.getItem("userID");
+        const songName = songInfo.name;
+        const songArtist = songInfo.artists[0].name;
+        if (active) {
+            // Currently hearted, remove from database
+            axios.post("/api/song/remove", {
+                params: {
+                    "userID": userID,
+                    "songName": songName,
+                    "songArtist": songArtist
+                }
+            });
+        } else {
+            // Not hearted, add to database
+            axios.post("/api/song/add", {
+                params: {
+                    "userID": userID,
+                    "songName": songName,
+                    "songArtist": songArtist
+                }
+            });
+        }
+        setActive(!active);
+    }
+
     useEffect(() => {
         if (songInfo && songFeatures) {
             getSongRecsTempo();
@@ -192,21 +218,46 @@ function Song() {
                 {songInfo && songFeatures ? 
                 <>
                     <div className='song-container'>
-                        <img className='albumPic' src={songInfo.album.images[0].url} alt='Album Cover' />
-                        <h1 className='subheader song'>{songInfo.name} <Heart style={{ width: "1.5rem", fill: active ? "#ff7500" : "transparent", stroke: active ? "white" : "white" }} inactiveColor = "white" isActive={active} onClick={() => setActive(!active)} animationScale = {1.2} animationTrigger = "both" animationDuration = {.2} className = {`customHeart${active ? " active": ""}`}/></h1>
-                        <h2 className='subheader artist' style={{fontWeight: "250", marginTop: "-10px", cursor: "pointer"}} onClick={() => {
-                            navigate("/artist");
-                        }} >{songInfo.artists[0].name}</h2>
+                        <div className='album-pic-container'>
+                            <img className='album-pic' src={songInfo.album.images[0].url} alt='Album Cover' />
+                        </div>
+                        <div className='subheader-container'>
+                            <h1 className='subheader-song'>{`${songInfo.name} `}
+                                <Heart className = {`customHeart${active ? " active": ""}`} style={{ width: "1.5rem", fill: active ? "#ff7500" : "transparent", stroke: active ? "white" : "white" }} inactiveColor = "white" isActive={active} onClick={handleHeartClick} animationScale={1.2} animationTrigger="both" animationDuration={.2} />
+                            </h1>
+                            <h2 className='subheader-artist' onClick={() => {
+                                navigate(`/artist/${songInfo.artists[0].id}`);
+                            }}>{songInfo.artists[0].name}</h2>
+                        </div>
 
                         <div className='song-data'>
                             <table className='song-data-table'>
-                                <tr><th className='song-data-headings'>Album</th> <th className='song-data-headings'>Released</th> <th className='song-data-headings'>Length</th></tr>
-                                <tr><td className='song-data-entries'>{songInfo.album.name}</td> <td className='song-data-entries'>{releaseDate}</td> <td className='song-data-entries'>{durationMin}<span style={{fontWeight: "250"}} >m</span> {durationSec}<span style={{fontWeight: "250"}} >s</span></td></tr>
+                                <tr>
+                                    <th className='song-data-headings'>Album</th>
+                                    <th className='song-data-headings'>Released</th>
+                                    <th className='song-data-headings'>Length</th>
+                                </tr>
+                                <tr>
+                                    <td className='song-data-entries'>{songInfo.album.name}</td>
+                                    <td className='song-data-entries'>{releaseDate}</td>
+                                    <td className='song-data-entries'>
+                                        {durationMin}<span style={{fontWeight: "250"}} >m</span> {durationSec}<span style={{fontWeight: "250"}} >s</span>
+                                    </td>
+                                </tr>
                             </table>
-                            
                             <table className='song-data-table'>
-                                <tr><th className='song-data-headings'>Tempo</th> <th className='song-data-headings'>Energy</th> <th className='song-data-headings'>Valence</th></tr>
-                                <tr><td className='song-data-entries'>{Math.round(songFeatures.tempo)} <span style={{fontWeight: "250"}} >bpm</span></td> <td className='song-data-entries'>{songFeatures.energy}</td> <td className='song-data-entries'>{songFeatures.valence}</td></tr>
+                                <tr>
+                                    <th className='song-data-headings'>Tempo</th>
+                                    <th className='song-data-headings'>Energy</th>
+                                    <th className='song-data-headings'>Valence</th>
+                                </tr>
+                                <tr>
+                                    <td className='song-data-entries'>
+                                        {Math.round(songFeatures.tempo)} <span style={{fontWeight: "250"}} >bpm</span>
+                                    </td>
+                                    <td className='song-data-entries'>{songFeatures.energy}</td>
+                                    <td className='song-data-entries'>{songFeatures.valence}</td>
+                                </tr>
                             </table>
                         </div>
                     </div>

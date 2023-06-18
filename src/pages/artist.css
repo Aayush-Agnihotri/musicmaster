@@ -1,23 +1,33 @@
-.artist-container, .top-tracks-container {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+.artist-container {
     color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.albumPic {
+.album-pic-container {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.album-pic {
+    width: 45%;
     border-radius: 20px;
-    display: block;
-    margin: auto;
-    margin-top: 2%;
-    width: 20%;
 }
 
-.subheader {
-    text-decoration: none;
-    text-align: center;
+.subheader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-.artist {
-    margin-top: 5px;
+.subheader-name {
+    margin-bottom: 10px;
 }
 
 .artist-data-table{
@@ -35,6 +45,14 @@
 .artist-data-entries {
     font-size: x-large;
     text-align: center;
+}
+
+.top-tracks-container {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .top-tracks-table{

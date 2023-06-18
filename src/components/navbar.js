@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 function Navbar() {
+    const navigate = useNavigate();
     const [loggedIn, setLoggedIn] = useState(false);
     const [token, setToken] = useState();
     const [PFP, setPFP] = useState();
@@ -23,8 +24,11 @@ function Navbar() {
 
     useEffect(() => {
         if (token) {
-            setLoggedIn(true);
             getProfileData();
+            setLoggedIn(true);
+        }
+        if (!window.localStorage.token && window.location.pathname !== "/") {
+            navigate('/');
         }
     }, [token])
 
@@ -34,8 +38,7 @@ function Navbar() {
                 Authorization: `Bearer ${token}`
             }
         }).catch(response => console.log(response));
-        window.localStorage.setItem("user_id", data.id);
-        window.localStorage.setItem("username", data.display_name);
+        window.localStorage.setItem("userID", data.id);
         window.localStorage.setItem("PFP", data.images[0].url);
         setPFP(data.images[0].url);
     }
@@ -51,9 +54,11 @@ function Navbar() {
                         </Link>
                     </div>
                     <div className='links-container'>
-                        <Link className='favorites-link' to={'/favorites'}>
-                            Favorites
-                        </Link>
+                        {loggedIn ? 
+                            <Link className='favorites-link' to={'/favorites'}>
+                                Favorites
+                            </Link>
+                        : <></>}
                         <LoginBtn loggedIn={loggedIn} />
                         {PFP ? 
                             <>

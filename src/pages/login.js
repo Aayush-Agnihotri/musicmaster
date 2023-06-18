@@ -13,11 +13,18 @@ function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storage = window.localStorage.getItem("username");
-        if (storage) {
-            setUsername(storage);
-        }
-    }, [])
+        getUsername();
+    }, []);
+
+    const getUsername = async (e) => {
+        const { data } = await axios.get("https://api.spotify.com/v1/me", {
+            headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("token")}`
+            }
+        }).catch(response => console.log(response));
+        window.localStorage.setItem("username", data.display_name);
+        setUsername(data.display_name);
+    }
 
     const searchSong = async (e) => {
         e.preventDefault()
@@ -53,9 +60,9 @@ function Login() {
                 <>
                     <div className='login-description-container'>
                         <h2 className='login-description-title'>Welcome back, {username}!</h2>
-                        <p className='login-description'>Search for a song and MusicMaster will come up with personalized recommendations for you!</p>
+                        <p className='login-description'>Search for a song to favorite and MusicMaster will come up with personalized recommendations for you!</p>
                         <form className='search-form' onSubmit={searchSong}>
-                            <input type="text" onChange={e => setSearchKey(e.target.value)} placeholder="Enter song name"/>
+                            <input autoFocus type="text" onChange={e => setSearchKey(e.target.value)} placeholder="Enter song name"/>
                             <button id="login-button" className="big-btn search-btn" style={loading ? {backgroundColor: "#ff5300"} : {}}>{loading ? "Searching..." : "Search"}</button>
                         </form>
                     </div>
