@@ -2,7 +2,7 @@
 
 ### Purpose
 
-### Installing NJoy
+### Installing and Running MusicMaster
 1. Ensure you have the latest version of `Node`, `npm`, `Python`, and `PostgreSQL` installed on your machine
 2. Clone the repo from GitHub
 3. In your terminal, `cd` into the `musicmaster` directory
