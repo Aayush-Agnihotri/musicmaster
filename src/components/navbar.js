@@ -7,9 +7,14 @@ import axios from 'axios';
 
 function Navbar() {
     const navigate = useNavigate();
+    const [windowSize, setWindowSize] = useState([
+        window.innerWidth,
+        window.innerHeight,
+      ]);
     const [loggedIn, setLoggedIn] = useState(false);
     const [token, setToken] = useState();
     const [PFP, setPFP] = useState();
+    const [smallBrowser, setSmallBrowser] = useState(false);
 
     useEffect(() => {
         const hash = window.location.hash
@@ -23,6 +28,18 @@ function Navbar() {
     }, [])
 
     useEffect(() => {
+        const handleWindowResize = () => {
+          setWindowSize([window.innerWidth, window.innerHeight]);
+        };
+    
+        window.addEventListener('resize', handleWindowResize);
+    
+        return () => {
+          window.removeEventListener('resize', handleWindowResize);
+        };
+      }, []);
+
+    useEffect(() => {
         if (token) {
             getProfileData();
             setLoggedIn(true);
@@ -31,6 +48,36 @@ function Navbar() {
             navigate('/');
         }
     }, [token])
+
+    useEffect(() => {
+        const nav = document.querySelector('.navbar');
+        const nav_btn = document.querySelector('.nav-btn');
+        const logo_container = document.querySelector('.logo-container');
+        const links = document.querySelector('.links-container');
+        if (windowSize[0] <= 500 && !loggedIn) {
+            nav.style.width = '50%';
+            nav.style.textAlign = 'center';
+            nav.style.alignItems = 'center';
+            nav_btn.style.display = 'none';
+        }
+        if (windowSize[0] > 500 && !loggedIn) {
+            nav.style.width = '80%';
+            nav_btn.style.display = 'inline-block';
+        }
+        if (windowSize[0] <= 700 && loggedIn) {
+            setSmallBrowser(true);
+            nav.style.width = '95%';
+        }
+        if (windowSize[0] <= 500 && loggedIn) {
+            nav.style.display = 'flex';
+            nav.style.flexDirection = 'column';
+            nav_btn.style.display = 'inline-block';
+            logo_container.style.display = 'flex';
+            logo_container.style.flexDirection = 'column';
+            logo_container.style.alignItems = 'center';
+            logo_container.style.justifyContent = 'center';
+        }
+    }, [windowSize, loggedIn])
 
     const getProfileData = async (e) => {
         const { data } = await axios.get("https://api.spotify.com/v1/me", {
@@ -59,8 +106,10 @@ function Navbar() {
                                 Favorites
                             </Link>
                         : <></>}
-                        <LoginBtn loggedIn={loggedIn} />
-                        {PFP ? 
+                        <div className='nav-btn'>
+                            <LoginBtn loggedIn={loggedIn} />
+                        </div>
+                        {PFP && !smallBrowser ? 
                             <>
                                 <div className='pfp-container'>
                                     <img className='pfp' src={PFP} alt='Profile' />
