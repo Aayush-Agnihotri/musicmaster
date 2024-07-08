@@ -1,7 +1,6 @@
 # MusicMaster
 
-![MusicMaster Image]([https://aayush-agnihotri.me/images/musicmaster.png])
-<img src="https://aayush-agnihotri.me/images/musicmaster.png" width=270 height=480>
+<img src="https://aayush-agnihotri.me/images/musicmaster.png">
 
 ### Purpose
 MusicMaster is a music recommendation engine built on the Spotify API and song dataset which utilizes machine learning and content-based filtering to recommend songs. Users can log in with their Spotify account through the OAuth framework to search for song information, audio features, and save their favorite songs and artists. MusicMaster will then come up with personalized song recommendations based on the saved information, allowing the user to directly add playlists and songs to their Spotify account for viewing and listening.
